@@ -17,7 +17,6 @@ input.addEventListener("input", (e) => {
 // onclick 함수 사용, parcel에서 함수 undefined 오류 떄문에 window(전역)에 설정
 window.checkOnlyOne = (element, name, value) => {
   window.scrollTo({ top: 0, behavior: "smooth" });
-  sessionStorage.setItem("page", 1);
   const checkStatus = element.checked;
   const checkboxes = document.getElementsByName(name);
   checkboxes.forEach((cb) => {
@@ -26,6 +25,11 @@ window.checkOnlyOne = (element, name, value) => {
   element.checked = true;
   if (checkStatus === false) return;
   sessionStorage.setItem(name, value);
+  sessionStorage.setItem("page", 1);
+  if (input.value.trim().length < 1) {
+    errorRender("Please enter your keyword to search.");
+    return;
+  }
   if (
     document.querySelector("." + sessionStorage.getItem("type") + "-count")
       .textContent === "0"
@@ -36,10 +40,12 @@ window.checkOnlyOne = (element, name, value) => {
         "Too many results."
     )
       errorRender("Too many results.");
-    else
-      errorRender(
-        `${value.replace(/^[a-z]/, (char) => char.toUpperCase())} not Found!`
-      );
+    else {
+      if (name !== "list-count")
+        errorRender(
+          `${value.replace(/^[a-z]/, (char) => char.toUpperCase())} not Found!`
+        );
+    }
     return;
   }
   getMovies();
@@ -81,8 +87,13 @@ const checked = (name, value) => {
 
 const errorRender = (message) => {
   let errorHtml = `<div class="error-message">${message}</div>`;
-  document.querySelector(".page-show").textContent = 0;
-  document.querySelector(".total-result").textContent = 0;
+  if (message === "Please enter your keyword to search.") {
+    document.querySelector(".movie-count").textContent = "0";
+    document.querySelector(".series-count").textContent = "0";
+    document.querySelector(".episode-count").textContent = "0";
+  }
+  document.querySelector(".page-show").textContent = "0";
+  document.querySelector(".total-result").textContent = "0";
   document.querySelector(".movies").innerHTML = errorHtml;
   document.querySelector(".movies").style.visibility = "visible";
   document.querySelector(".main-layout nav").style.display = "none";
