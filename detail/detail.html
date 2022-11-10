@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css"
+    />
+    <link rel="stylesheet" href="../scss/detail.scss" />
+    <script defer src="../js/detail.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <a class="title" href="/"><span>//</span> Movie Search</a>
+      </div>
+    </header>
+    <main>
+      <div class="container details">
+        <div class="movie-poster"></div>
+        <div class="movie-details">
+          <div class="title"></div>
+          <div class="labels">
+            <span class="released"></span>
+            <span class="runtime"></span>
+            <span class="country"></span>
+          </div>
+          <div class="plot"></div>
+          <div class="ratings">
+            <h3>Ratings</h3>
+            <span></span>
+          </div>
+          <div class="actors">
+            <h3>Actors</h3>
+            <span></span>
+          </div>
+          <div class="director">
+            <h3>Director</h3>
+            <span></span>
+          </div>
+          <div class="production">
+            <h3>Production</h3>
+            <span></span>
+          </div>
+          <div class="genre">
+            <h3>Genre</h3>
+            <span></span>
+          </div>
+        </div>
+      </div>
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </main>
+    <footer>
+      <div class="about">About</div>
+      <div class="contact">Contact</div>
+    </footer>
+  </body>
+</html>

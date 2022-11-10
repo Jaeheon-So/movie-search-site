@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css"
+    />
+    <link rel="stylesheet" href="../scss/search.scss" />
+    <script defer src="../js/search.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <a class="title" href="/"><span>//</span> Movie Search</a>
+        <input
+          class="search-input"
+          type="text"
+          placeholder="Search for Movies, Series & more "
+        />
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        <section class="side-layout">
+          <div class="option-wrapper">
+            <div class="option-title">Type</div>
+            <label for="movie">
+              <div class="input-wrapper">
+                <input
+                  type="checkbox"
+                  name="type"
+                  id="movie"
+                  value="movie"
+                  onclick="checkOnlyOne(this, this.name, this.value)"
+                />Movies
+              </div>
+              <span class="movie-count"></span>
+            </label>
+            <label for="series">
+              <div class="input-wrapper">
+                <input
+                  type="checkbox"
+                  name="type"
+                  id="series"
+                  value="series"
+                  onclick="checkOnlyOne(this, this.name, this.value)"
+                />Series
+              </div>
+              <span class="series-count"></span>
+            </label>
+            <label for="episode">
+              <div class="input-wrapper">
+                <input
+                  type="checkbox"
+                  name="type"
+                  id="episode"
+                  value="episode"
+                  onclick="checkOnlyOne(this, this.name, this.value)"
+                />Episode
+              </div>
+              <span class="episode-count"></span>
+            </label>
+          </div>
+          <div class="option-wrapper">
+            <div class="option-title">List Count</div>
+            <label for="list-10">
+              <div class="input-wrapper">
+                <input
+                  type="checkbox"
+                  name="list-count"
+                  id="list-10"
+                  value="10"
+                  onclick="checkOnlyOne(this, this.name, this.value)"
+                />10
+              </div>
+            </label>
+            <label for="list-20">
+              <div class="input-wrapper">
+                <input
+                  type="checkbox"
+                  name="list-count"
+                  id="list-20"
+                  value="20"
+                  onclick="checkOnlyOne(this, this.name, this.value)"
+                />20
+              </div>
+            </label>
+            <label for="list-30">
+              <div class="input-wrapper">
+                <input
+                  type="checkbox"
+                  name="list-count"
+                  id="list-30"
+                  value="30"
+                  onclick="checkOnlyOne(this, this.name, this.value)"
+                />30
+              </div>
+            </label>
+          </div>
+        </section>
+        <section class="main-layout">
+          <div class="main-top">
+            <div class="paging-info">
+              Showing
+              <span class="page-show"></span>
+              out of
+              <span class="total-result"></span>
+              results
+            </div>
+            <select name="year" id="year" onchange="changeYear(this)">
+              <option value="all">All Years</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+              <option value="2018">2018</option>
+              <option value="2017">2017</option>
+              <option value="2016">2016</option>
+              <option value="2015">2015</option>
+              <option value="2014">2014</option>
+              <option value="2013">2013</option>
+              <option value="2012">2012</option>
+              <option value="2011">2011</option>
+              <option value="2010">2010</option>
+              <option value="2009">2009</option>
+              <option value="2008">2008</option>
+              <option value="2007">2007</option>
+              <option value="2006">2006</option>
+              <option value="2005">2005</option>
+              <option value="2004">2004</option>
+              <option value="2003">2003</option>
+              <option value="2002">2002</option>
+              <option value="2001">2001</option>
+              <option value="2000">2000</option>
+              <option value="1999">1999</option>
+              <option value="1998">1998</option>
+              <option value="1997">1997</option>
+              <option value="1996">1996</option>
+              <option value="1995">1995</option>
+              <option value="1994">1994</option>
+              <option value="1993">1993</option>
+              <option value="1992">1992</option>
+              <option value="1991">1991</option>
+              <option value="1990">1990</option>
+              <option value="1989">1989</option>
+              <option value="1988">1988</option>
+              <option value="1987">1987</option>
+              <option value="1986">1986</option>
+              <option value="1985">1985</option>
+            </select>
+          </div>
+          <div class="movies"></div>
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination"></ul>
+          </nav>
+        </section>
+      </div>
+    </main>
+    <footer>
+      <div class="about">About</div>
+      <div class="contact">Contact</div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.container {
+  max-width: 1250px;
+  margin: auto;
+  display: flex;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+  overflow-y: scroll;
+}
+
+header {
+  .container {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    .title {
+      font-size: 22px;
+      color: #424242;
+      font-weight: 600;
+      span {
+        color: #40a9ff;
+      }
+    }
+  }
+}
+
+main {
+  .spinner-border {
+    display: none;
+    color: #0075ff;
+    width: 50px;
+    height: 50px;
+    border-width: 5px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
+  .container {
+    gap: 50px;
+    .movie-poster {
+      width: 400px;
+      height: 600px;
+      box-sizing: border-box;
+      box-shadow: 0 0 2px 0 rgb(0 0 0 / 50%);
+      border-radius: 10px;
+      overflow: hidden;
+      img {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+    }
+    .movie-details {
+      width: 800px;
+      box-sizing: border-box;
+      color: #627078;
+      .title {
+        color: #000;
+        font-size: 50px;
+        font-weight: bold;
+        line-height: 1;
+        margin-bottom: 30px;
+      }
+      .labels {
+        span {
+          color: #fdc000;
+          &::after {
+            content: "·";
+            margin: 0 6px;
+          }
+          &:last-child::after {
+            display: none;
+          }
+        }
+      }
+      .plot {
+        margin-top: 20px;
+        width: 100%;
+      }
+      h3 {
+        margin: 24px 0 6px;
+        color: #000;
+        font-size: 20px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+footer {
+  width: 100%;
+  padding-top: 35px;
+  padding-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  .about,
+  .contact {
+    color: #627078;
+    cursor: pointer;
+  }
+}
