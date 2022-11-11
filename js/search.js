@@ -2,6 +2,17 @@ const input = document.querySelector(".search-input");
 let timer;
 let page = sessionStorage.getItem("page");
 
+const setYear = () => {
+  const selectYear = document.getElementById("year");
+  const date = new Date();
+  for (let i = date.getFullYear(); i >= 1985; i--) {
+    const objOption = document.createElement("option");
+    objOption.text = i;
+    objOption.value = i;
+    selectYear.options.add(objOption);
+  }
+};
+
 input.addEventListener("input", (e) => {
   sessionStorage.setItem("page", 1);
   clearTimeout(timer);
@@ -218,4 +229,5 @@ const getMovies = async () => {
   }
 };
 
+setYear();
 getMovies();

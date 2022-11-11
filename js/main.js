@@ -1,6 +1,17 @@
 const btnApply = document.querySelector(".btn-apply");
 const input = document.querySelector(".search-input");
 
+const setYear = () => {
+  const selectYear = document.getElementById("year");
+  const date = new Date();
+  for (let i = date.getFullYear(); i >= 1985; i--) {
+    const objOption = document.createElement("option");
+    objOption.text = i;
+    objOption.value = i;
+    selectYear.options.add(objOption);
+  }
+};
+
 const goSearch = () => {
   if (input.value.trim().length < 1) {
     alert("검색어를 입력해주세요");
@@ -25,3 +36,4 @@ input.addEventListener("keypress", (e) => {
   }
 });
 input.focus();
+setYear();
