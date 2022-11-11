@@ -114,5 +114,32 @@ footer {
   .contact {
     color: #627078;
     cursor: pointer;
+    position: relative;
+    padding: 10px 0;
+    .detail {
+      display: none;
+      z-index: 999;
+      width: 430px;
+      height: 150px;
+      padding: 12px 16px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+      word-break: keep-all;
+      background-color: white;
+      position: absolute;
+      top: -150px;
+      left: -190px;
+      p {
+        margin-bottom: 14px;
+        a:hover {
+          text-decoration: underline;
+        }
+        span {
+          color: #40a9ff;
+        }
+      }
+    }
+    &:hover .detail {
+      display: block;
+    }
   }
 }
