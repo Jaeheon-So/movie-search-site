@@ -1,3 +1,4 @@
+// imdbid를 사용해서 api에 요청을 보낸 후 나온 데이터를 반환하는 함수
 const getData = async (id) => {
   let url = `https://omdbapi.com/?apikey=7035c60c&i=${id}&plot=full`;
   const res = await fetch(url);
@@ -5,16 +6,19 @@ const getData = async (id) => {
   return data;
 };
 
+// error가 발생 했을 시 에러화면을 출력하는 함수
 const errorRender = (message) => {
   let errorHtml = `<div class="error-message">${message}</div>`;
   document.querySelector("main").innerHTML = errorHtml;
 };
 
+// 페이지 로딩 시 로딩스피너를 보여주는 함수
 const loadingRender = () => {
   document.querySelector(".details").style.visibility = "hidden";
   document.querySelector(".spinner-border").style.display = "block";
 };
 
+// 화면에 가져온 영화 상세 데이터를 출력해주는 함수
 const renderDetails = (details) => {
   document.querySelector(
     ".movie-poster"
@@ -40,6 +44,7 @@ const renderDetails = (details) => {
   document.querySelector(".spinner-border").style.display = "none";
 };
 
+// 최초에 실행시키는, 영화의 상세 정보를 가져오는 과정을 나타내는 함수
 const getDetail = async () => {
   const movieId = sessionStorage.getItem("id");
   try {
