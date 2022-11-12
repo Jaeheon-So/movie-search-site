@@ -26,6 +26,7 @@ input.addEventListener("input", (e) => {
   clearTimeout(timer);
   let keyword = e.target.value.trim();
   sessionStorage.setItem("s", keyword);
+  document.querySelector(".movies").innerHTML = ``;
   if (keyword.length < 1) {
     errorRender("Please enter your keyword to search.");
     return;
@@ -49,7 +50,7 @@ window.checkOnlyOne = (element, name, value) => {
   // sessionStorage 값 변경
   sessionStorage.setItem(name, value);
   sessionStorage.setItem("page", 1);
-
+  document.querySelector(".movies").innerHTML = ``;
   // input에 값이 없을 경우 errorRender
   if (input.value.trim().length < 1) {
     errorRender("Please enter your keyword to search.");
@@ -86,13 +87,7 @@ window.checkOnlyOne = (element, name, value) => {
 window.changeYear = (element) => {
   sessionStorage.setItem("page", 1);
   sessionStorage.setItem("y", element.value);
-  getMovies();
-};
-
-/* 페이지 클릭 시 실행되는 함수
-   해당 페이지의 영화 목록을 가져오도록 동작 */
-window.pageClick = (pageNum) => {
-  sessionStorage.setItem("page", pageNum);
+  document.querySelector(".movies").innerHTML = ``;
   getMovies();
 };
 
@@ -135,7 +130,7 @@ const errorRender = (message) => {
   document.querySelector(".total-result").textContent = "0";
   document.querySelector(".movies").innerHTML = errorHtml;
   document.querySelector(".movies").style.visibility = "visible";
-  document.querySelector(".main-layout nav").style.display = "none";
+  // document.querySelector(".main-layout nav").style.display = "none";
   document.querySelector(".spinner-border").style.display = "none";
 };
 
@@ -159,68 +154,29 @@ const countRender = async (inputValue, totalResult, year) => {
   document.querySelector(".episode-count").textContent = episodeCount || "0";
 };
 
-/*영화 목록 하단에 페이지 목록을 화면에 출력하는 함수
-  영화 목록 상단에 전체 개수 중 몇번째(?? ~ ??)목록 범위를 보고 있는지 화면에 출력 */
-const pageRender = (totalPage, listCount, totalResult) => {
-  const page = sessionStorage.getItem("page");
-  let paginationHtml = "";
-  let pageGroup = Math.ceil(page / 10);
-  let last = pageGroup * 10;
-  if (last > totalPage) {
-    last = totalPage;
-  }
-  let first = last - 9 <= 0 ? 1 : last - 9;
-  if (first >= 11 || (11 <= last && last <= 19)) {
-    paginationHtml = `<li class="page-item" onclick="pageClick(1)">
-                        <a class="page-link" href='javascript:void(0)'>&lt;&lt;</a>
-                      </li>
-                      <li class="page-item" onclick="pageClick(${page - 1})">
-                        <a class="page-link" href='javascript:void(0)'>&lt;</a>
-                      </li>`;
-  }
-  for (let i = first; i <= last; i++) {
-    paginationHtml += `<li class="page-item ${i == page ? "active" : ""}">
-                        <a class="page-link" href="javascript:void(0)" onclick="pageClick(${i})">${i}</a>
-                      </li>`;
-  }
-  if (last < totalPage) {
-    paginationHtml += `<li class="page-item" onclick="pageClick(${page + 1})">
-                        <a  class="page-link" href='javascript:void(0)'>&gt;</a>
-                       </li>
-                       <li class="page-item" onclick="pageClick(${totalPage})">
-                        <a class="page-link" href='javascript:void(0)'>&gt;&gt;</a>
-                       </li>`;
-  }
-  document.querySelector(".page-show").textContent = `${
-    page * listCount - listCount + 1
-  } ~ ${page * listCount > totalResult ? totalResult : page * listCount}`;
-  document.querySelector(".pagination").innerHTML = paginationHtml;
-};
-
 // 가져온 영화 목록을 화면에 출력하는 함수
 const movieRender = (movies) => {
-  let movieHtml = ``;
-  movieHtml = movies
-    .map((movie) => {
-      return `<div class="movie" onclick="goDetail('${movie.imdbID}')">
+  movieHtml = movies.forEach((movie) => {
+    const el = document.createElement("div");
+    el.classList.add("movie");
+    el.innerHTML = /*html*/ ` 
+              <div class="movie" onclick="goDetail('${movie.imdbID}')">
                 <div class="info">
                   <div class="year">${movie.Year}</div>
                   <div class="title">${movie.Title}</div>
                 </div>
                 <img src="${movie.Poster}" alt="movie-poster" onerror="this.src='../No_img.jpg'">
               </div>`;
-    })
-    .join("");
-  document.querySelector(".movies").innerHTML = movieHtml;
+    document.querySelector(".movies").append(el);
+  });
   document.querySelector(".movies").style.visibility = "visible";
-  document.querySelector(".main-layout nav").style.display = "flex";
   document.querySelector(".spinner-border").style.display = "none";
 };
 
 // 검색하여 나온 영화 목록을 화면에 출력하는 과정을 나타내는 함수
 const getMovies = async () => {
   try {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // window.scrollTo({ top: 0, behavior: "smooth" });
     // sessionStorage에 저장한 값들 가져오기
     const selectType = sessionStorage.getItem("type");
     const listCount = sessionStorage.getItem("list-count");
@@ -241,7 +197,7 @@ const getMovies = async () => {
     let totalPage = 0;
 
     // 영화 목록을 가져오기 전 로딩
-    loadingRender();
+    // loadingRender();
 
     // 영화 목록을 10, 20, 30개 씩 가져올 경우를 생각한 반복문
     for (let i = listCount / 10 - 1; i >= 0; i--) {
@@ -255,7 +211,11 @@ const getMovies = async () => {
       resStatus = data.Response;
       totalResult = totalResult || data.totalResults;
       totalPage = Math.ceil(totalResult / listCount);
-
+      console.log(totalPage);
+      if (totalPage === Number(page)) {
+        console.log("hi");
+        infiniteScroll = false;
+      }
       // 응답상태가 False 이고 첫번째 반복이면 에러를 발생시켜 catch 문으로 이동
       /* 응답상태가 False 이고 첫번째 반복이 아니면 반복문 탈출
          (ex: 전체 결과가 8개, list-count가 20이면 반복문을 2번 도는데 2번째 돌 때 응답상태가 False이다.
@@ -273,13 +233,39 @@ const getMovies = async () => {
 
     // 각 type 별 개수와 전체 개수, 페이지 목록, 영화 목록을 화면에 출력
     await countRender(inputValue, totalResult, year);
-    pageRender(totalPage, listCount, totalResult);
     movieRender(movies);
   } catch (error) {
     // try에서 error 발생 시 errorRender
     errorRender(error.message);
   }
 };
+
+let infiniteScroll = true;
+const footerEl = document.querySelector(".bottom");
+// 1. 인터섹션 옵저버 생성
+const io = new IntersectionObserver(
+  (entry, observer) => {
+    // 3. 현재 보이는 target 출력
+    const ioTarget = entry[0].target;
+
+    // 4. viewport에 target이 보이면 하는 일
+    if (entry[0].isIntersecting && infiniteScroll) {
+      console.log("현재 보이는 타켓", ioTarget);
+      // 5. 현재 보이는 target 감시 취소해줘
+      io.observe(footerEl);
+      // 6. 새로운 li 추가해
+      let currentPage = sessionStorage.getItem("page");
+      sessionStorage.setItem("page", Number(currentPage) + 1);
+      getMovies();
+    }
+  },
+  {
+    // 8. 타겟이 50% 이상 보이면 해줘!
+    threshold: 1,
+  }
+);
+// 2. li감시해!
+io.observe(footerEl);
 
 const init = () => {
   setInput();
