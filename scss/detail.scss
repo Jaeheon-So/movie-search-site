@@ -49,6 +49,13 @@ main {
     bottom: 0;
     margin: auto;
   }
+  .error-message {
+    flex-grow: 1;
+    text-align: center;
+    padding-top: 90px;
+    font-size: 30px;
+    font-weight: bold;
+  }
   .container {
     gap: 50px;
     .movie-poster {

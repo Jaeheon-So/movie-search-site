@@ -21,16 +21,11 @@ const goSearch = () => {
     input.focus();
     return;
   }
-  // sessionStorage에 필요한 값들 저장 후 search page로 이동
+  // 필요한 값들 저장 후 search page로 이동
   const selectType = document.querySelector("#type").value;
   const listCount = document.querySelector("#list-count").value;
   const year = document.querySelector("#year").value;
-  sessionStorage.setItem("type", selectType);
-  sessionStorage.setItem("list-count", listCount);
-  sessionStorage.setItem("s", input.value.trim());
-  sessionStorage.setItem("y", year);
-  sessionStorage.setItem("page", 1);
-  window.location.href = `./search/search.html`;
+  window.location.href = `./search/search.html?s=${input.value.trim()}&type=${selectType}&y=${year}&page=1&list-count=${listCount}`;
 };
 
 //apply 버튼이 클릭되거나 input에서 enter가 눌렸을 때 goSearch 함수 실행

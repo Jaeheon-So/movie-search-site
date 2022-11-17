@@ -1,6 +1,6 @@
 const input = document.querySelector(".search-input");
 let timer;
-let page = sessionStorage.getItem("page");
+let page = getParam("page");
 
 /* 년도 select box에 1985 ~ 올해년도까지 option을 추가해주는 함수
    이전 페이지에서 선택한 년도를 화면에 출력 */
@@ -13,24 +13,75 @@ const setYear = () => {
     objOption.value = i;
     selectYear.options.add(objOption);
   }
-  selectYear.value = sessionStorage.getItem("y");
+  selectYear.value = getParam("y");
 };
 
 const setInput = () => {
-  input.value = sessionStorage.getItem("s");
+  input.value = getParam("s");
 };
+
+const setParam = (key, value) => {
+  const urlSearch = new URLSearchParams(location.search);
+  for (let i = 0; i < key.length; i++) {
+    urlSearch.set(key[i], value[i]);
+  }
+  const newUrl = `${
+    window.location.origin
+  }/search/search.html?${urlSearch.toString()}`;
+  window.history.pushState({ path: newUrl }, "", newUrl);
+};
+
+function getParam(key) {
+  return new URLSearchParams(location.search).get(key);
+}
+let pastInput = getParam("s");
 
 // input값에 변화가 생기면 실행
 input.addEventListener("input", (e) => {
-  sessionStorage.setItem("page", 1);
-  clearTimeout(timer);
-  let keyword = e.target.value.trim();
-  sessionStorage.setItem("s", keyword);
-  if (keyword.length < 1) {
+  // clearTimeout(timer);
+  const keyword = e.target.value.trim();
+  pastInput = getParam("s");
+  setParam(["s", "page"], [keyword, 1]);
+  // timer = setTimeout(getMovies, 1000);
+});
+
+window.addEventListener("locationChange", () => {
+  // console.log("hi");
+  setInput();
+  const selectYear = document.getElementById("year");
+  selectYear.value = getParam("y");
+  checked("type", getParam("type"));
+  checked("list-count", getParam("list-count"));
+
+  if (getParam("s").length < 1) {
     errorRender("Please enter your keyword to search.");
     return;
   }
-  timer = setTimeout(getMovies, 1000);
+  console.log(pastInput, getParam("s"));
+  if (pastInput !== getParam("s") || !findCheckboxError()) {
+    // console.log("why");
+    getMovies();
+  }
+});
+
+history.pushState = ((f) =>
+  function pushState() {
+    let ret = f.apply(this, arguments);
+    window.dispatchEvent(new Event("pushstate"));
+    window.dispatchEvent(new Event("locationChange"));
+    return ret;
+  })(history.pushState);
+
+history.replaceState = ((f) =>
+  function replaceState() {
+    let ret = f.apply(this, arguments);
+    window.dispatchEvent(new Event("replacestate"));
+    window.dispatchEvent(new Event("locationChange"));
+    return ret;
+  })(history.replaceState);
+
+window.addEventListener("popstate", () => {
+  window.dispatchEvent(new Event("locationChange"));
 });
 
 // 체크박스에 onclick 함수 사용, 함수 undefined 오류 떄문에 window(전역)에 설정
@@ -46,20 +97,18 @@ window.checkOnlyOne = (element, name, value) => {
 
   if (checkStatus === false) return; // 이미 체크된 박스를 또 놀렀을 경우 밑에 코드 실행 안되게 return
 
-  // sessionStorage 값 변경
-  sessionStorage.setItem(name, value);
-  sessionStorage.setItem("page", 1);
+  //  값 변경
+  pastInput = getParam("s");
+  setParam([name, "page"], [value, 1]);
+  // getMovies(); // 위 if문들에 걸리지 않았으면 실행
+};
 
+const findCheckboxError = () => {
   // input에 값이 없을 경우 errorRender
-  if (input.value.trim().length < 1) {
-    errorRender("Please enter your keyword to search.");
-    return;
-  }
 
-  // type 체크박스에서 체크된 type의 개수가 0인 경우
   if (
-    document.querySelector("." + sessionStorage.getItem("type") + "-count")
-      .textContent === "0"
+    document.querySelector("." + getParam("type") + "-count").textContent ===
+    "0"
   ) {
     // 에러 메세지가 존재하고 그것이 "Too many results."인 경우 errorRender("Too many results.")
     if (
@@ -71,45 +120,48 @@ window.checkOnlyOne = (element, name, value) => {
     // 그 외의 경우
     else {
       // type 체크박스가 클릭되었을 경우 errorRender("${Type} not Found!")
-      if (name !== "list-count")
-        errorRender(
-          `${value.replace(/^[a-z]/, (char) => char.toUpperCase())} not Found!`
-        );
+      // if (name !== "list-count")
+      errorRender(
+        `${getParam("type").replace(/^[a-z]/, (char) =>
+          char.toUpperCase()
+        )} not found!`
+      );
+      // `${value.replace(/^[a-z]/, (char) => char.toUpperCase())}
     }
-    return;
+    return true;
   }
-  getMovies(); // 위 if문들에 걸리지 않았으면 실행
+
+  // type 체크박스에서 체크된 type의 개수가 0인 경우
+
+  return false;
 };
 
 /* 년도 select box에 변화가 생겼을 경우 실행되는 함수
    해당 년도의 영화를 검색 */
 window.changeYear = (element) => {
-  sessionStorage.setItem("page", 1);
-  sessionStorage.setItem("y", element.value);
+  setParam(["y", "page"], [element.value, 1]);
   getMovies();
 };
 
 /* 페이지 클릭 시 실행되는 함수
    해당 페이지의 영화 목록을 가져오도록 동작 */
 window.pageClick = (pageNum) => {
-  sessionStorage.setItem("page", pageNum);
-  getMovies();
+  setParam(["page"], [pageNum]);
+  // getMovies();
 };
 
 /* 영화를 클릭했을 때 실행되는 함수
    영화 상세 페이지로 이동 */
 window.goDetail = (movieId) => {
-  sessionStorage.setItem("id", movieId);
-  window.location.href = `/detail/detail.html`;
+  window.location.href = `/detail/detail.html?id=${movieId}`;
 };
 
 // 이전 페이지에서 선택한 type, list-count에 해당하는 체크박스에 체크 표시를 하는 함수
 const checked = (name, value) => {
   const checkboxes = document.getElementsByName(name);
   checkboxes.forEach((cb) => {
-    if (cb.value === value) {
-      cb.checked = true;
-    }
+    if (cb.value === value) cb.checked = true;
+    else cb.checked = false;
   });
 };
 
@@ -162,7 +214,7 @@ const countRender = async (inputValue, totalResult, year) => {
 /*영화 목록 하단에 페이지 목록을 화면에 출력하는 함수
   영화 목록 상단에 전체 개수 중 몇번째(?? ~ ??)목록 범위를 보고 있는지 화면에 출력 */
 const pageRender = (totalPage, listCount, totalResult) => {
-  const page = sessionStorage.getItem("page");
+  const page = getParam("page");
   let paginationHtml = "";
   let pageGroup = Math.ceil(page / 10);
   let last = pageGroup * 10;
@@ -221,12 +273,12 @@ const movieRender = (movies) => {
 const getMovies = async () => {
   try {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    // sessionStorage에 저장한 값들 가져오기
-    const selectType = sessionStorage.getItem("type");
-    const listCount = sessionStorage.getItem("list-count");
-    const inputValue = sessionStorage.getItem("s");
-    const year = sessionStorage.getItem("y");
-    const page = sessionStorage.getItem("page");
+    // 저장한 값들 가져오기
+    const selectType = getParam("type");
+    const listCount = getParam("list-count");
+    const inputValue = getParam("s");
+    const year = getParam("y");
+    const page = getParam("page");
 
     // input에 값이 없을 경우 errorRender
     if (inputValue.length < 1) {
@@ -282,10 +334,11 @@ const getMovies = async () => {
 };
 
 const init = () => {
+  // console.log("init");
   setInput();
   setYear();
-  checked("type", sessionStorage.getItem("type"));
-  checked("list-count", sessionStorage.getItem("list-count"));
+  checked("type", getParam("type"));
+  checked("list-count", getParam("list-count"));
   getMovies();
 };
 

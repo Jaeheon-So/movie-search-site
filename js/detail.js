@@ -1,3 +1,8 @@
+const getParam = (key) => {
+  return new URLSearchParams(location.search).get(key);
+};
+let pastInput = getParam("s");
+
 // imdbid를 사용해서 api에 요청을 보낸 후 나온 데이터를 반환하는 함수
 const getData = async (id) => {
   let url = `https://omdbapi.com/?apikey=7035c60c&i=${id}&plot=full`;
@@ -46,7 +51,7 @@ const renderDetails = (details) => {
 
 // 최초에 실행시키는, 영화의 상세 정보를 가져오는 과정을 나타내는 함수
 const getDetail = async () => {
-  const movieId = sessionStorage.getItem("id");
+  const movieId = getParam("id");
   try {
     loadingRender();
     const details = await getData(movieId);
