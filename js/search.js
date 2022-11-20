@@ -1,65 +1,32 @@
+import { setParam, getParam } from "./param";
+
 const input = document.querySelector(".search-input");
 let timer;
-let page = getParam("page");
-
-/* 년도 select box에 1985 ~ 올해년도까지 option을 추가해주는 함수
-   이전 페이지에서 선택한 년도를 화면에 출력 */
-const setYear = () => {
-  const selectYear = document.getElementById("year");
-  const date = new Date();
-  for (let i = date.getFullYear(); i >= 1985; i--) {
-    const objOption = document.createElement("option");
-    objOption.text = i;
-    objOption.value = i;
-    selectYear.options.add(objOption);
-  }
-  selectYear.value = getParam("y");
-};
-
-const setInput = () => {
-  input.value = getParam("s");
-};
-
-const setParam = (key, value) => {
-  const urlSearch = new URLSearchParams(location.search);
-  for (let i = 0; i < key.length; i++) {
-    urlSearch.set(key[i], value[i]);
-  }
-  const newUrl = `${
-    window.location.origin
-  }/search/search.html?${urlSearch.toString()}`;
-  window.history.pushState({ path: newUrl }, "", newUrl);
-};
-
-function getParam(key) {
-  return new URLSearchParams(location.search).get(key);
-}
 let pastInput = getParam("s");
+let pastYear = getParam("y");
 
 // input값에 변화가 생기면 실행
 input.addEventListener("input", (e) => {
-  // clearTimeout(timer);
+  clearTimeout(timer);
   const keyword = e.target.value.trim();
   pastInput = getParam("s");
-  setParam(["s", "page"], [keyword, 1]);
-  // timer = setTimeout(getMovies, 1000);
+  pastYear = getParam("y");
+  timer = setTimeout(() => setParam(["s", "page"], [keyword, 1]), 700);
 });
 
+// url값에 변화가 생기면 실행, 59번째 줄까지 구글에 검색해서 복붙
 window.addEventListener("locationChange", () => {
-  // console.log("hi");
-  setInput();
-  const selectYear = document.getElementById("year");
-  selectYear.value = getParam("y");
-  checked("type", getParam("type"));
-  checked("list-count", getParam("list-count"));
-
   if (getParam("s").length < 1) {
     errorRender("Please enter your keyword to search.");
     return;
   }
   console.log(pastInput, getParam("s"));
-  if (pastInput !== getParam("s") || !findCheckboxError()) {
-    // console.log("why");
+  console.log(pastYear, getParam("y"));
+  if (
+    pastInput !== getParam("s") ||
+    pastYear !== getParam("y") ||
+    !findCheckboxError()
+  ) {
     getMovies();
   }
 });
@@ -81,6 +48,13 @@ history.replaceState = ((f) =>
   })(history.replaceState);
 
 window.addEventListener("popstate", () => {
+  pastInput = input.value;
+  setInput();
+  const selectYear = document.getElementById("year");
+  pastYear = selectYear.value;
+  selectYear.value = getParam("y");
+  checked("type", getParam("type"));
+  checked("list-count", getParam("list-count"));
   window.dispatchEvent(new Event("locationChange"));
 });
 
@@ -97,15 +71,31 @@ window.checkOnlyOne = (element, name, value) => {
 
   if (checkStatus === false) return; // 이미 체크된 박스를 또 놀렀을 경우 밑에 코드 실행 안되게 return
 
-  //  값 변경
   pastInput = getParam("s");
-  setParam([name, "page"], [value, 1]);
-  // getMovies(); // 위 if문들에 걸리지 않았으면 실행
+  pastYear = getParam("y");
+  setParam([name, "page"], [value, 1]); //  쿼리값 변경
+};
+
+/* 년도 select box에 1985 ~ 올해년도까지 option을 추가해주는 함수
+   이전 페이지에서 선택한 년도를 화면에 출력 */
+const setYear = () => {
+  const selectYear = document.getElementById("year");
+  const date = new Date();
+  for (let i = date.getFullYear(); i >= 1985; i--) {
+    const objOption = document.createElement("option");
+    objOption.text = i;
+    objOption.value = i;
+    selectYear.options.add(objOption);
+  }
+  selectYear.value = getParam("y");
+};
+
+// input 값 설정(최초 로딩, 뒤로가기, 앞으로 가기 때문에 필요)
+const setInput = () => {
+  input.value = getParam("s");
 };
 
 const findCheckboxError = () => {
-  // input에 값이 없을 경우 errorRender
-
   if (
     document.querySelector("." + getParam("type") + "-count").textContent ===
     "0"
@@ -120,34 +110,29 @@ const findCheckboxError = () => {
     // 그 외의 경우
     else {
       // type 체크박스가 클릭되었을 경우 errorRender("${Type} not Found!")
-      // if (name !== "list-count")
       errorRender(
         `${getParam("type").replace(/^[a-z]/, (char) =>
           char.toUpperCase()
         )} not found!`
       );
-      // `${value.replace(/^[a-z]/, (char) => char.toUpperCase())}
     }
     return true;
   }
-
-  // type 체크박스에서 체크된 type의 개수가 0인 경우
-
   return false;
 };
 
 /* 년도 select box에 변화가 생겼을 경우 실행되는 함수
-   해당 년도의 영화를 검색 */
+   해당 년도로 쿼리값 변경 */
 window.changeYear = (element) => {
+  pastInput = getParam("s");
+  pastYear = getParam("y");
   setParam(["y", "page"], [element.value, 1]);
-  getMovies();
 };
 
 /* 페이지 클릭 시 실행되는 함수
-   해당 페이지의 영화 목록을 가져오도록 동작 */
+   해당 페이지오 쿼리값 변경 */
 window.pageClick = (pageNum) => {
   setParam(["page"], [pageNum]);
-  // getMovies();
 };
 
 /* 영화를 클릭했을 때 실행되는 함수
@@ -273,7 +258,7 @@ const movieRender = (movies) => {
 const getMovies = async () => {
   try {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    // 저장한 값들 가져오기
+    // 쿼리값들 가져오기
     const selectType = getParam("type");
     const listCount = getParam("list-count");
     const inputValue = getParam("s");
@@ -334,7 +319,6 @@ const getMovies = async () => {
 };
 
 const init = () => {
-  // console.log("init");
   setInput();
   setYear();
   checked("type", getParam("type"));

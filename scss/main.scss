@@ -69,10 +69,10 @@ main {
         border-radius: 10px;
         cursor: pointer;
         outline: none;
-      }
-      button:hover {
-        box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
-        border-color: #40a9ff;
+        &:hover {
+          box-shadow: 0 0 0 2px rgb(24 144 255 / 20%);
+          border-color: #40a9ff;
+        }
       }
     }
   }

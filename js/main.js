@@ -21,7 +21,7 @@ const goSearch = () => {
     input.focus();
     return;
   }
-  // 필요한 값들 저장 후 search page로 이동
+  // 쿼리리스트링을 포함한 search page로 이동
   const selectType = document.querySelector("#type").value;
   const listCount = document.querySelector("#list-count").value;
   const year = document.querySelector("#year").value;

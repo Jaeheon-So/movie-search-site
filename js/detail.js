@@ -1,7 +1,4 @@
-const getParam = (key) => {
-  return new URLSearchParams(location.search).get(key);
-};
-let pastInput = getParam("s");
+import { getParam } from "./param";
 
 // imdbid를 사용해서 api에 요청을 보낸 후 나온 데이터를 반환하는 함수
 const getData = async (id) => {
