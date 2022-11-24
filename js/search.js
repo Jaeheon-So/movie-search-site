@@ -16,12 +16,8 @@ input.addEventListener("input", (e) => {
 
 // url값에 변화가 생기면 실행, 59번째 줄까지 구글에 검색해서 복붙
 window.addEventListener("locationChange", () => {
-  if (getParam("s").length < 1) {
-    errorRender("Please enter your keyword to search.");
-    return;
-  }
-  console.log(pastInput, getParam("s"));
-  console.log(pastYear, getParam("y"));
+  if (getParam("s").length < 1)
+    return errorRender("Please enter your keyword to search.");
   if (
     pastInput !== getParam("s") ||
     pastYear !== getParam("y") ||
@@ -266,10 +262,8 @@ const getMovies = async () => {
     const page = getParam("page");
 
     // input에 값이 없을 경우 errorRender
-    if (inputValue.length < 1) {
-      errorRender("Please enter your keyword to search.");
-      return;
-    }
+    if (inputValue.length < 1)
+      return errorRender("Please enter your keyword to search.");
 
     // 필요한 값들 초기화
     let movies = [];
